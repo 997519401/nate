@@ -1,0 +1,27 @@
+ - fs
+  - Node.js内置的fs模块就是文件系统模块，负责读写文件。
+  - 和所有其它JavaScript模块不同的是，fs模块同时提供了异步和同步的方法。
+
+  按照JavaScript的标准，异步读取一个文本文件的代码如下：
+```
+ 'use strict';
+
+ var fs = require('fs');
+
+ fs.readFile('sample.txt', 'utf-8', function (err, data) {
+     if (err) {
+         console.log(err);
+     } else {
+         console.log(data);
+     }
+ });
+
+```
+- sample.txt文件必须在当前目录下，且文件编码为utf-8。
+
+- 当读取二进制文件时，不传入文件编码时，回调函数的data参数    将返回一个Buffer对象。在Node.js中，Buffer对象就是一个包含零个或任意个字节的数组（注意和Array不同）。
+- Buffer对象可以和String作转换，例如，把一个Buffer对象转换成String：
+
+
+
+
