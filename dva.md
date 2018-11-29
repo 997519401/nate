@@ -290,8 +290,140 @@ polyfill
 并不是所有的浏览器都支持URLSearchParams API，为了在多个浏览器支持，可以添加URLSearchParams polyfill 。
 
 
+==========================================================================
+
+Component还是PureComponent
+
+Component和PureComponent有一个不同点
+除了为你提供了一个具有浅比较的shouldComponentUpdate方法，PureComponent和Component基本上完全相同。当props或者state改变时，PureComponent将对props和state进行浅比较。另一方面，Component不会比较当前和下个状态的props和state。因此，每当shouldComponentUpdate被调用时，组件默认的会重新渲染。
+
+浅比较101
+当把之前和下一个的props和state作比较，浅比较将检查原始值是否有相同的值（例如：1 == 1或者ture==true）,数组和对象引用是否相同。
+
+从不改变
+您可能已经听说过，不要在props和state中改变对象和数组，如果你在你的父组件中改变对象，你的“pure”子组件不将更新。虽然值已经被改变，但是子组件比较的是之前props的引用是否相同，所以不会检测到不同。
+
+因此，你可以通过使用es6的assign方法或者数组的扩展运算符或者使用第三方库，强制返回一个新的对象。
+
+存在性能问题？
+比较原始值值和对象引用是低耗时操作。如果你有一列子对象并且其中一个子对象更新，对它们的props和state进行检查要比重新渲染每一个子节点要快的多。
+
+其它解决办法
+不要在render的函数中绑定值
+假设你有一个项目列表，每个项目都传递一个唯一的参数到父方法。为了绑定参数，你可能会这么做：
+
+<CommentItem likeComment={() => this.likeComment(user.id)} />
+这个问题会导致每次父组件render方法被调用时，一个新的函数被创建，已将其传入likeComment。这会有一个改变每个子组件props的副作用，它将会造成他们全部重新渲染，即使数据本身没有发生变化。
+
+为了解决这个问题，只需要将父组件的原型方法的引用传递给子组件。子组件的likeComment属性将总是有相同的引用，这样就不会造成不必要的重新渲染。
+
+<CommentItem likeComment={this.likeComment} userID={user.id} />
+然后再子组件中创建一个引用了传入属性的类方法：
+
+class CommentItem extends PureComponent {
+  ...
+  handleLike() {
+    this.props.likeComment(this.props.userID)
+  }
+  ...
+}
+不要在render方法里派生数据
+考虑一下你的配置组件将从一系列文章中展示用户最喜欢的十篇文章。
+
+render() {
+  const { posts } = this.props
+  const topTen = posts.sort((a, b) => b.likes - a.likes).slice(0, 9)
+  return //...
+}
+每次组件重新渲染时topTen都将有一个新的引用，即使posts没有改变并且派生数据也是相同的。这将造成列表不必要的重新渲染。
+
+你可以通过缓存你的派生数据来解决这个问题。例如，设置派生数据在你的组件state中，仅当posts更新时它才更新。
+
+componentWillMount() {
+  this.setTopTenPosts(this.props.posts)
+}
+componentWillReceiveProps(nextProps) {
+  if (this.props.posts !== nextProps.posts) {
+    this.setTopTenPosts(nextProps)
+  }
+}
+setTopTenPosts(posts) {
+  this.setState({
+    topTen: posts.sort((a, b) => b.likes - a.likes).slice(0, 9)
+  })
+}
+如果你正在使用Redux，可以考虑使用reselect来创建"selectors"来组合和缓存派生数据。
+
+==========================================================================
+
+
+------------------------------------------------------------------------
+
+ overview
+
+react-intl多语言中<FormattedMessage />组件用法
+因项目需要，需要根据不同地区当前用户选择的语言， 加载不同的语言文件从而实现国际化。
+
+关于react-intl中的<FormattedMessage />组件用法：
+首先创建需要翻译的国家语言的js或者json文件，比如：
+
+en_CN.json:
+
+```
+{
+  "i18n.hello": "Hello, this is i18n",
+  "i18n.name": "my name is {name}"
+}
+
+```
+zh_CN.json:
+
+```
+{
+  "i18n.hello": "你好，这是i18n",
+  "i18n.name": "我的名字是 {name}"
+}
+
+```
+然后在需要翻译的组件中引入<FormattedMessage />
+```
+import {FormattedMessage} from 'react-intl';
+```
+
+基础用法：
+以id属性的值为索引——索引到自定义的映射表：
+
+<FormattedMessage id="i18n.hello" defaultMessage="Hello, this is i18n"/>
+其中defaultMessage为id对应的属性值找不到时默认显示的语句。
+
+动态传值:
+
+<FormattedMessage id={i18n.name} values={{name: <b>{name}</b>}} />
+在定义i18n.name的模板里用到了{name}，代表可以动态传值，这样可以通过<FormattedMessage />中的 values 属性传一个JSON对象来动态显示我们的内容了。这里要注意是values而不是value!!!!
+
+=======================================================================================
+
 
 -----------------------------------------------------
+modle ：effect
+put
+
+用于触发 action 。
+
+yield put({ type: 'todos/add', payload: 'Learn Dva' });
+
+call
+
+用于调用异步逻辑，支持 promise 。
+
+const result = yield call(fetch, '/todos');
+
+select
+
+用于从 state 里获取数据。
+
+const todos = yield select(state => state.todos);
+
 
 
 
