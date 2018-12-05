@@ -1,5 +1,42 @@
 密码设置改成大小写字母加数字限制在50位一下：//密码 Admin123456
 
+
+======================================================================
+
+@connect
+
+@connect(({ production, monitor, project, price, loading }) => ({
+
+project：这个参数就是[models/project.js]里面，[project/reducers/]的返回值。
+
+  production,
+  monitor,
+  project,
+  price,
+  loadingDetail: loading.effects['project/fetchProjectDetail'],
+  loadingPercent: loading.effects['project/fetchProjectDataPercent'],
+  loadingProduction: loading.effects['production/fetchAggregationData'],
+  loadingEnergy: loading.effects['production/fetchEnergyData'],
+}))
+
+=======================================================================
+
+this.props.dispatch({
+// type:找的是analyse.js下面的fetchAnalogyData方法
+
+  type: 'analyse/fetchAnalogyData',
+  params: {
+    id: nextProps.monitor.currentMoni
+    params: {
+      date_type: this.state.date_type
+      date: this.state.date,
+      key: this.state.key,
+      not_aggregate: this.state.not_a
+    }
+  }
+})
+
+=======================================================================
 /* BasicLayout */
 
 react-intl ：
@@ -99,6 +136,10 @@ export default connect(({ user, loading }) => ({ user, loading }))(User);
 
 ===============================================================
 
+toLowerCase
+toLowerCase() 方法用于把字符串转换为小写。
+
+===============================================================
 #dva-dynamic
 - 其中有一个解决组件动态加载的问题dva/dynamic（工具类）方法
 ```
@@ -425,8 +466,6 @@ select
 用于从 state 里获取数据。
 
 const todos = yield select(state => state.todos);
-
-
 
 
 
