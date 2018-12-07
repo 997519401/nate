@@ -49,8 +49,7 @@ react在循环的时候会报出 warning
 在浏览器中打开后，没有警告，页面可以正常工作。
 
 但是，这个key在传递数据的时候根本就没有用，设置了不是很多余吗？
-
-有位网友在http://pandakeeper.net:8000/?p=254 中是这么说的：
+有的人说：
 
  react的key关乎到react的dom-diff算法 react中对于dom的操作是根据生成的data-reactid进行绑定的，添加key可以保证dom结构的完整性，而不会根据react自己对dom标记的key进行重新分配 react每次决定重新渲染的时候，几乎完全是根据data-reactid来决定的，最重要的是这个机制
 
@@ -438,6 +437,16 @@ setTopTenPosts(posts) {
 
 react-intl多语言中<FormattedMessage />组件用法
 因项目需要，需要根据不同地区当前用户选择的语言， 加载不同的语言文件从而实现国际化。
+
+使用这个组件的时候，我们这么写：
+```
+<FormattedMessage
+    id='app.greeting'
+    description='say hello to Howard'
+    defaultMessage='Hello, Howard!'
+    />
+```
+- id指代的是这个字符串在locale配置文件中的属性名，description指的是对于这个位置替代的字符串的描述，便于维护代码，不写的话也不会影响输出的结果，当在locale配置文件中没有找到这个id的时候，输出的结果就是defaultMessage的值。
 
 关于react-intl中的<FormattedMessage />组件用法：
 首先创建需要翻译的国家语言的js或者json文件，比如：
