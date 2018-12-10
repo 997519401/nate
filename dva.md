@@ -73,6 +73,31 @@ dom-diff是指： 所有的 DOM 变动，都先在虚拟 DOM 上发生，然后�
 react-intl ：
 为React 做国际化这个库提供了 React 组件和Api两种方式来格式化日期，数字和字符串等。
 
+
+=====================================================================
+
+
+navigator.language 和 navigator.browserLanguage;
+
+首先查看一下 navigator 对象中的这几个与 language 相关的属性。
+
+navigator 对象包含有关浏览器的信息。没有应用于 navigator 对象的公开标准，不过所有浏览器都支持该对象。但是其内部一些属性及其返回值在各浏览器并不统一。
+
+language：返回当前的浏览器语言（来自 Mozilla Developer Center）
+userLanguage：返回操作系统设定的自然语言（来自 MSDN）
+browserLanguage：返回当前的浏览器语言（来自 MSDN）
+systemLanguage：返回当前操作系统的缺省语言（来自 MSDN）
+关于 navigator 对象的更多资料，请参见：MSDN、Mozilla Developer Center。
+
+对于浏览器，Mozilla Developer Center 中的 language 属性与 MSDN 中的 browserLanguage 属性描述很像。
+
+
+解决方案
+可以使用下面的代码获取当前浏览器语言：
+
+(navigator.language || navigator.browserLanguage).toLowerCase()
+
+
 =====================================================================
 
 #dva-loading 实践用法
