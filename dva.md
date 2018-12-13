@@ -60,12 +60,130 @@ dom-diff是指： 所有的 DOM 变动，都先在虚拟 DOM 上发生，然后�
 
 我理解的权限验证
 
-在请求的时候设置一个token，token里面设置限制字段，如果没有这个字段就没有权限调取这个权限
+在请求的时候设置一个token，token里面设置限制字段，如果没有这个字段就无法调取这个权限
 
 
 =======================================================================
 
 前端安全性问题
+
+
+一、随着前端的快速发展，各种技术不断更新，但是前端的安全问题也值得我们重视，不要等到项目上线之后才去重视安全问题，到时候被黑客攻击的时候一切都太晚了。
+
+二、本文将讲述前端的六大安全问题，是平常比较常见的安全问题，当然如果还有其他必要重要的安全问题大家可以帮忙补充：
+
+1、XSS（Cross-Site Scripting）脚本攻击漏洞；
+
+2、CSRF（Cross-sit request forgery）漏洞；
+
+3、iframe安全隐患问题；
+
+4、本地存储数据问题；
+
+5、第三方依赖的安全性问题；
+
+6.HTTPS加密传输数据；
+
+下面将对这些问题进行分享说明。
+
+三、XSS（Cross-Site Scripting）脚本攻击漏洞
+
+    XSS是前端谈论最多的安全问题，是通过在你的输入文本当中或者这HTML标签当中插入js脚本进行攻击，比如会在你的a标签或者img标签之前插入一些脚本文件就能攻击到你的网站，所有在用HTML去切入到div的时候一定要注意，或者长串的字符串嵌入到a标签的时候。
+
+解决办法：
+
+1：如果要使用HTML进行转换内容的时候，写代码时改为innerText而不用innerHTML，或者把<script><iframe>等标签替换掉；
+
+```
+ var HtmlUtil = {
+     /*1.用浏览器内部转换器实现html转码*/
+     htmlEncode:function (html){
+         //1.首先动态创建一个容器标签元素，如DIV
+         var temp = document.createElement ("div");
+         //2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+         (temp.textContent != undefined ) ? (temp.textContent = html) : (temp.innerText = html);
+         //3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+         var output = temp.innerHTML;
+         temp = null;
+         return output;
+     },
+     /*2.用浏览器内部转换器实现html解码*/
+     htmlDecode:function (text){
+         //1.首先动态创建一个容器标签元素，如DIV
+         var temp = document.createElement("div");
+         //2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+         temp.innerHTML = text;
+        //3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+        var output = temp.innerText || temp.textContent;
+         temp = null;
+        return output;
+     }
+ };
+```
+2.对一些切入标签的字符串进行转义：
+
+```
+var HtmlUtil = {
+      /*1.用正则表达式实现html转码*/
+      htmlEncodeByRegExp:function (str){
+           var s = "";
+           if(str.length == 0) return "";
+           s = str.replace(/&/g,"&amp;");
+           s = s.replace(/</g,"&lt;");
+          s = s.replace(/>/g,"&gt;");
+          s = s.replace(/ /g,"&nbsp;");
+          s = s.replace(/\'/g,"&#39;");
+          s = s.replace(/\"/g,"&quot;");
+          return s;
+    },
+    /*2.用正则表达式实现html解码*/
+    htmlDecodeByRegExp:function (str){
+          var s = "";
+          if(str.length == 0) return "";
+          s = str.replace(/&amp;/g,"&");
+          s = s.replace(/&lt;/g,"<");
+          s = s.replace(/&gt;/g,">");
+          s = s.replace(/&nbsp;/g," ");
+          s = s.replace(/&#39;/g,"\'");
+          s = s.replace(/&quot;/g,"\"");
+          return s;
+        }
+    };
+```
+四、CSRF（Cross-sit request forgery）漏洞
+
+CSRF也称为跨站请求伪造，其实就是对网站中的一些表单提交行为被黑客利用。比如你的网站登录的时候存到cookie的一些个人信息，当你访问黑客的网站有一段相同代码隐藏div，但你点击的时候就会导致你的网站被登出或者被登录，就是在对别的网站就行操作的时候会对你之前访问的网站发送请求。
+
+解决办法：
+
+1.增加token验证.因为cookie发送请求的时候会自动增加上，但是token却不会，这样就避免了攻击
+
+2.Referer验证。页面来源的判断
+
+五、iframe安全隐患问题
+
+有时候前端页面为了显示别人的网站或者一些组件的时候，就用iframe来引入进来，比如嵌入一些广告等等。但是有些iframe安全性我们无法去评估测试，有时候会携带一些第三方的插件啊，或者嵌入了一下不安全的脚本啊，这些都是值得我们去考虑的。
+
+解决办法：
+
+1.使用安全的网站进行嵌入；
+
+2.在iframe添加一个叫sandbox的属性，浏览器会对iframe内容进行严格的控制，详细了解可以看看相关的API接口文档。
+
+六、本地存储数据问题
+
+很多开发者为了方便，把一些个人信息不经加密直接存到本地或者cookie，这样是非常不安全的，黑客们可以很容易就拿到用户的信息，所有在放到cookie中的信息或者localStorage里的信息要进行加密，加密可以自己定义一些加密方法或者网上寻找一些加密的插件，或者用base64进行多次加密然后再多次解码，这样就比较安全了。
+
+七、第三方依赖安全隐患
+
+现如今的项目开发，很多都喜欢用别人写好的框架，为了方便快捷，很快的就搭建起项目，自己写的代码不到20%，过多的用第三方依赖或者插件，一方面会影响性能问题，另一方面第三方的依赖或者插件存在很多安全性问题，也会存在这样那样的漏洞，所以使用起来得谨慎。
+
+解决办法：手动去检查那些依赖的安全性问题基本是不可能的，最好是利用一些自动化的工具进行扫描过后再用，比如NSP(Node Security Platform)，Snyk等等。
+
+八、HTTPS加密传输数据
+
+在浏览器对服务器访问或者请求的过程中，会经过很多的协议或者步骤，当其中的某一步被黑客拦截的时候，如果信息没有加密，就会很容易被盗取。所以接口请求以及网站部署等最好进行HTTPS加密，这样防止被人盗取数据。
+
 
 =======================================================================
 /* BasicLayout */
@@ -543,5 +661,4 @@ const todos = yield select(state => state.todos);
 问题
 overview 能耗占比分析 选择监控点是如果切换项目可能导致之前项目的id残留在库里，然后显示在选项里
 
-同比分析里面的 选择年份 会重新渲染 不要放到render里 需要什么数据渲染什么数据
-
+同比分析里面的 选择年份 会重新渲染 不要放到render里
