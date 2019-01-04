@@ -669,3 +669,22 @@ modous pfuncin
 overview 能耗占比分析 选择监控点是如果切换项目可能导致之前项目的id残留在库里，然后显示在选项里
 
 同比分析里面的 选择年份 会重新渲染 不要放到render里
+
+============================================================
+
+修改antd的主题色
+在 。webpackec.js 里将
+```
+export default {
+  entry: 'src/index.js',
+  extraBabelPlugins: [
+    // 'transform-decorators-legacy',
+    <!-- 将style:css,改为style:true -->
+    ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }],
+  ],
+  加上
+  "theme": {
+    <!--"primary-color为想要修改的颜色  -->
+    "primary-color": "#34558c"
+  },
+```
