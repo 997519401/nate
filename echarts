@@ -1,0 +1,3 @@
+echarts
+
+ - echarts图里里面如果只能选中一个，图例组件里面有selectmode的属性
