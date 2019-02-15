@@ -1,3 +1,35 @@
 
 组件
  - HeaderDown 经过下拉显示所包裹的组件
+
+ 在菜单中使用自定义的 icon
+ - 由于 umi 的限制，在 router.config.js 是不能直接只是用组件的，Pro 中暂时支持 使用 ant.design 本身的 icon type，和传入一个 img 的 url。只需要直接在 icon 属性上配置即可，如果是个 url，Pro 会自动处理为一个 img 标签。
+
+如果这样还不能满足需求，可以自定义 getIcon 方法。
+
+如果你想使用 iconfont 的图标，你可以使用ant.desgin的自定义图标.
+
+
+```
+const IconFont = Icon.createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
+});
+
+// Allow menu.js config icon as string or ReactNode
+//   icon: 'setting',
+//   icon: 'http://demo.com/icon.png',
+//   icon: <Icon type="setting" />,
+const getIcon = icon => {
+  if (typeof icon === 'string' && isUrl(icon)) {
+    return <img src={icon} alt="icon" className={styles.icon} />;
+  }
+  if (typeof icon === 'string' && icon.indexOf('icon') !== -1) {
+    return <IconFont type={icon} />
+  }
+  if (typeof icon === 'string') {
+    return <Icon type={icon} />;
+  }
+  
+  return icon;
+};
+```
