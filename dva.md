@@ -688,3 +688,8 @@ export default {
     "primary-color": "#34558c"
   },
 ```
+
+========================
+
+antd Button
+使用htmlType ：表示的是使用原生的html方式，submit表示把当前表单的数据提交到服务器
