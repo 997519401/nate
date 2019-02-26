@@ -38,3 +38,41 @@ const getIcon = icon => {
 Table
 
 使用table组件的时候dataSource={这里必须是数组}，不然会报错
+
+
+- 使用搜索的方法
+ - 先在状态里面设置一个初始值
+ - 之后定义一个方法把input里面的值传进去
+ - 然后在需要使用数据的时候对值进行筛选
+ ```
+ state = {
+    searchValue: '',
+  };
+
+  // 企业搜索
+  searchPackage = (e: any) => {
+    const value = e.target.value
+    this.setState({
+      searchValue: value
+    })
+  }
+
+//数据处理
+render(){
+const resultValue = list.filter((v: any) => {
+      if (!~v.name.indexOf(this.state.searchValue)) {
+        return false
+      }
+      return true
+    })
+
+    return (
+      <div>
+      <Input style={{ width: 200 }} onChange={this.searchPackage} />
+    ...
+      <EnterpriseDirectoryList resultValue={resultValue} loading={this.props.loading} />
+      </div> 
+    )
+}
+  
+ ```
