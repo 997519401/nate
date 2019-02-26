@@ -693,3 +693,31 @@ export default {
 
 antd Button
 使用htmlType ：表示的是使用原生的html方式，submit表示把当前表单的数据提交到服务器
+
+重置redux状态
+- 定义一个action，然后这个action里是把需要清空的数据变为空,然后在需要的地方dispatch这个action
+```
+
+  state: {
+    successData: {}
+  },
+efects: {
+  *reset({ }, { put }) {
+      yield put({
+        type: 'successtest',
+        payload: {}
+      })
+    }
+
+
+    reducers: {
+        。。。。
+    successtest(state, action) {
+      return {
+        ...state,
+        successData: action.payload
+      }
+    }
+  },
+};
+```
