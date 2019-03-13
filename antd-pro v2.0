@@ -35,6 +35,21 @@ const getIcon = icon => {
 ```
 =====================================
 
+antd Form里面的 hideRequiredMark 是隐藏星号
+hideRequiredMark
+```
+Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
+              <Form.Item {...formItemLayout} label="数据的Key">
+                {getFieldDecorator('key', {
+                  initialValue: '',
+                  rules: [{ required: true, message: '请输入数据的Key' }],
+                })(<Input placeholder="请输入数据的Key" />)}
+              </Form.Item>
+```
+
+=====================================
+
+
 Table
 
 使用table组件的时候dataSource={这里必须是数组}，不然会报错
@@ -76,3 +91,32 @@ const resultValue = list.filter((v: any) => {
 }
   
  ```
+
+
+Table 使用map遍历的时候，如果要用三元运算符判断，他columns里面的dataIndex不能和遍历的值里面的键一样，否则渲染不出来
+```
+  const columns = [
+      {
+        title: '名称',
+        dataIndex: 'name'
+      },
+      {
+        title: '所属项目',
+        dataIndex: 'project_name'
+      },
+      {
+        title: '公司',
+        dataIndex: 'company_name'
+      },
+      {
+        title: '能源类型',
+        dataIndex: 'energytype'
+      },
+
+      ......
+      const structureData = structureList && structureList.results && structureList.results.length !== 0 ? structureList.results.map((v, i) => {
+      v.energytype = v.type !== undefined ? type[v.type] : ''
+      v.key = i
+      return v
+    }) : []
+```
